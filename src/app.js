@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser())
 
 app.use(cors({
-    origin: "https://techie-findi-frontend.vercel.app/",
+    origin: "https://techie-findi-frontend.vercel.app",
     credentials: true
 }));
 
