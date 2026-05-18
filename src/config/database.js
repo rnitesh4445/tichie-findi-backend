@@ -1,6 +1,7 @@
-const mongoose=require("mongoose")
-const DB_String=require("../config/env").DB_String;
-const connectDB=async()=>{
-    await mongoose.connect(DB_String)
-}
-module.exports=connectDB;
+const mongoose = require("mongoose");
+
+const connectDB = async () => {
+    await mongoose.connect(process.env.DB_String);
+};
+
+module.exports = connectDB;
