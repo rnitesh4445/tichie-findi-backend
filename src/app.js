@@ -18,7 +18,7 @@ app.use(cors({
     credentials: true
 }));
 
-const profileUrlRouter = require("./router/profileUrl");
+
 const authRouter=require("./router/auth")
 const profileRouter=require("./router/profile")
 const requestRouter=require("./router/request");
@@ -28,7 +28,7 @@ app.use("/",authRouter)
 app.use("/",profileRouter)
 app.use("/",requestRouter)
 app.use("/",userRouter)
-app.use("/", profileUrlRouter);
+
 
 connectDB().then(()=>{
 
