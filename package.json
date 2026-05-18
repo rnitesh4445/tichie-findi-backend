@@ -6,9 +6,9 @@
   "author": "nitesh  kumar",
   "type": "commonjs",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+ "scripts": {
+  "start": "node src/app.js"
+}
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.10.0",
