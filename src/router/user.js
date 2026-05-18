@@ -1,10 +1,11 @@
-const expresss=require('express');
+const express=require('express');
 const userAuth = require('../middleware/auth');
-const userRouter=expresss.Router();
+const userRouter=express.Router();
 const  ConnectionRequest=require("../models/connectionRequest")
+const User=require("../models/user")
 
 
-const UserSafeFields=["firstName","lastName","skills","profilePicture"];
+const UserSafeFields = "firstName lastName skills photoUrl about";
 userRouter.get("/user/requests/received",userAuth,async(req,res)=>{
     try{
         const userId=req.user._id;
@@ -52,38 +53,44 @@ res.json({message:"Connections fetched successfully!", data})
     }
 })
 
-userRouter.get("/feed",userAuth,async(req,res)=>{
-    try{
-        const loggedInUserId=req.user._id;
-        const connections=await ConnectionRequest.find(
-            {
-                $or:[
-                    {fromUserId:loggedInUserId, toUserId:loggedInUserId}
-                ],
+userRouter.get("/feed", userAuth, async (req, res) => {
+
+    try {
+
+        const loggedInUserId = req.user._id;
+
+        const connections = await ConnectionRequest.find({
+            $or: [
+                { fromUserId: loggedInUserId },
+                { toUserId: loggedInUserId }
+            ]
+        }).select("fromUserId toUserId");
+
+        const hideUserFromFeed = new Set();
+
+        connections.forEach((conn) => {
+
+            hideUserFromFeed.add(conn.fromUserId.toString());
+
+            hideUserFromFeed.add(conn.toUserId.toString());
+
+        });
+
+        const users = await User.find({
+            _id: {
+                $nin: Array.from(hideUserFromFeed),
+                $ne: loggedInUserId
             }
-        ).select("fromUserId toUserId")
+        }).select(UserSafeFields);
 
-        const hideUserFromFeed=set();
-        connections.forEach((conn)=>{
-          
-                hideUserFromFeed.add(conn.toUserId.toString())
-                hideUserFromFeed.add(conn.fromUserId.toString())
-        
-        })
+        res.send(users);
 
-        const users=await User.find(
-            {
-                _id:{$nin:Array.from(hideUserFromFeed)},
-                _id:{$ne:loggedInUserId}
-            }
-
-
-        ).select(UserSafeFields)
     }
-    catch(err){
-        res.status(500).send("something went wrong"+err.message)
+    catch (err) {
+
+        res.status(500).send("something went wrong " + err.message);
+
     }
 
-
-})
+});
 module.exports=userRouter;

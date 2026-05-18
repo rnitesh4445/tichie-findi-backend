@@ -1,5 +1,6 @@
 const jwt=require("jsonwebtoken");
 const User=require("../models/user")
+const jwtSecret_key=require("../config/env").jwtSecret_key;
 
 const userAuth=async(req,res,next)=>{
     try{
@@ -8,7 +9,7 @@ const userAuth=async(req,res,next)=>{
         {
             throw new Error("token is not present")
         }
-        const decode=jwt.verify(token,"devTender@project")
+        const decode=jwt.verify(token,jwtSecret_key)
         const {_id}=decode;
         const user=await User.findById(_id);
         if(!user)

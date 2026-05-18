@@ -1,31 +1,38 @@
 const express=require("express");
 const app=express();
-const connectDB=require("./config/database")
+const connectDB=require("./config/database");
 const User=require("./models/user")
 const bcrypt=require("bcrypt")
 const cookieParser = require('cookie-parser')
 const  jwt=require("jsonwebtoken")
 const userAuth=require("./middleware/auth")
+const cors=require("cors")
 app.use(express.json());
 app.use(cookieParser())
-
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
+const profileUrlRouter = require("./router/profileUrl");
 const authRouter=require("./router/auth")
 const profileRouter=require("./router/profile")
 const requestRouter=require("./router/request");
 const userRouter = require("./router/user");
+
 app.use("/",authRouter)
 app.use("/",profileRouter)
 app.use("/",requestRouter)
 app.use("/",userRouter)
+app.use("/", profileUrlRouter);
 
 
 
 connectDB().then(()=>{
 
-console.log("Database connection established...");
+
 app.listen(3000,()=>{
-    console.log("server started succesfully on port  3000");
+    console.log("server is running on port 3000")
 })})
 .catch((err)=>{
-    console.error("Database cannot be connected!!",err.message);
+    console.log("Error connecting to database: "+err.message)
 })
